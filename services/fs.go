@@ -19,17 +19,20 @@ var videoExtensions = []string{
 	".opus",
 }
 
+var logger *utils.Logger
+
 func StartFileScan(directoryPath string) {
+	logger = utils.GetLogger()
 	var videoFiles []string
 
 	utils.AsyncTaskLoading(func() {
 		err := FindVideoFiles(directoryPath, &videoFiles)
 		if err != nil {
-			fmt.Println("Erro ao encontrar arquivos de vídeo:", err)
+			logger.Error(fmt.Sprintf("Failed to find for files: %s", err.Error()))
 		}
-	}, "Scanning for video files")
+	}, fmt.Sprintf("Scanning for video files in folder %s you can specify scan directory, run `subzero help` for details", directoryPath))
 
-	fmt.Println("Found files:")
+	logger.Debug(fmt.Sprintf("%b files found", len(videoFiles)))
 	for _, file := range videoFiles {
 		GetFileInfo(file, directoryPath)
 	}
