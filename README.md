@@ -1,0 +1,1 @@
+[![Go Build and Release](https://github.com/ceelsoin/subzero/actions/workflows/ci.yml/badge.svg)](https://github.com/ceelsoin/subzero/actions/workflows/ci.yml)
