@@ -30,7 +30,7 @@ func StartFileScan(directoryPath string) {
 	c := infra.NewConfigurationInstance()
 	cfg, err := c.GetConfig()
 	if err != nil {
-		logger.Error(fmt.Sprintf("Error loading config: ", err.Error()))
+		logger.Error(fmt.Sprintf("Error loading config: %s", err.Error()))
 	}
 
 	var videoFiles []string
