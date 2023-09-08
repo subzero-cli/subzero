@@ -6,28 +6,23 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/ceelsoin/subzero/domain"
+	"github.com/ceelsoin/subzero/infra"
 	"github.com/ceelsoin/subzero/utils"
 	"github.com/fatih/color"
 )
 
-type FileInfo struct {
-	Title             string
-	Year              string
-	Season            string
-	Episode           string
-	SanitizedName     string
-	Resolution        string
-	OpenSubtitlesHash string
-	Codec             string
-}
-
-func GetFileInfo(fileName string, videoPath string) FileInfo {
+func GetFileInfo(fileName string, videoPath string) domain.FileInfo {
 
 	logger := utils.GetLogger()
+	database := infra.GetDatabaseInstance()
+
+	fileInfo := domain.FileInfo{}
 
 	fileNameSplited := strings.Split(fileName, "/")
 	filenameWithoutPath := strings.ToLower(strings.Trim(fileNameSplited[len(fileNameSplited)-1], " "))
 	fileNameWithoutExt := removeExtension(filenameWithoutPath)
+	filePath := filepath.Join(videoPath, fileName)
 
 	sanitizedName := sanitizeName(fileNameWithoutExt)
 
@@ -36,9 +31,21 @@ func GetFileInfo(fileName string, videoPath string) FileInfo {
 	resolutionRegex := regexp.MustCompile(`\b(\d{3,4}p)\b`)
 	codecRegex := regexp.MustCompile(`(?i)\b(?:` + strings.Join(knownCodecs, "|") + `)\b`)
 
-	fileInfo := FileInfo{
-		SanitizedName: sanitizedName,
+	path, err := getFullPath(filePath)
+	if err != nil {
+		logger.Error(fmt.Sprintf("Failed to load path %s with error: %s", videoPath, err.Error()))
 	}
+
+	logger.Debug(fmt.Sprintf("Using path: %s", path))
+
+	fileInfo.FileName = filenameWithoutPath
+	fileInfo.Path = path
+	fileInfo.SanitizedName = sanitizedName
+
+	// md5, err := utils.CalculateChecksum(filePath)
+	// if err != nil {
+	// 	logger.Error(fmt.Sprintf("Erro ao calcular o hash md5: %s", err))
+	// }
 
 	match := seasonEpisodeRegex.FindStringSubmatch(sanitizedName)
 	if match != nil && len(match) >= 3 {
@@ -61,11 +68,12 @@ func GetFileInfo(fileName string, videoPath string) FileInfo {
 		fileInfo.Codec = codecMatch[0]
 	}
 
-	var filePath = filepath.Join(videoPath, fileName)
 	hash, err := utils.HashOpenSubtitles(filePath)
 	if len(hash) > 0 {
 		fileInfo.OpenSubtitlesHash = hash
 	}
+
+	fileInfo.ID = hash
 
 	if err != nil {
 		logger.Error(fmt.Sprintf("Erro ao calcular o hash: %s", err))
@@ -84,6 +92,8 @@ func GetFileInfo(fileName string, videoPath string) FileInfo {
 	boldPrint := color.New(color.Bold).SprintfFunc()
 
 	logger.Info(fmt.Sprintf("[%s] (%s) SEASON: %s, EPISODE: %s", fileInfo.OpenSubtitlesHash, boldPrint(filenameWithoutPath), fileInfo.Season, fileInfo.Episode))
+
+	database.Create(fileInfo)
 
 	return fileInfo
 }
