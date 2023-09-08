@@ -1,8 +1,13 @@
 package utils
 
 import (
+	"crypto/md5"
+	"crypto/sha256"
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
+	"hash/crc32"
+	"io"
 	"os"
 )
 
@@ -60,6 +65,59 @@ func HashOpenSubtitles(videoPath string) (string, error) {
 
 	returnedhash := fmt.Sprintf("%016x", filehash)
 	return returnedhash, nil
+}
+
+func GetFileMd5Hash(path string) (string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	hash := md5.New()
+
+	if _, err := io.Copy(hash, file); err != nil {
+		return "", err
+	}
+
+	hashInBytes := hash.Sum(nil)[:16]
+	md5Hash := hex.EncodeToString(hashInBytes)
+
+	return md5Hash, nil
+}
+
+func CalculateChecksum(filePath string) (string, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	hash := sha256.New()
+	if _, err := io.Copy(hash, file); err != nil {
+		return "", err
+	}
+
+	checksum := fmt.Sprintf("%x", hash.Sum(nil))
+	return checksum, nil
+}
+
+func GetCRC32(filePath string) (string, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	hash := crc32.NewIEEE()
+
+	if _, err := io.Copy(hash, file); err != nil {
+		return "", err
+	}
+
+	checksum := hash.Sum32()
+
+	return fmt.Sprintf("%d", checksum), nil
 }
 
 func max(a, b int64) int64 {
