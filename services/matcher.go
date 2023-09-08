@@ -23,26 +23,23 @@ type FileInfo struct {
 
 func GetFileInfo(fileName string, videoPath string) FileInfo {
 
-	// Remove extensão do arquivo
+	logger := utils.GetLogger()
+
 	fileNameSplited := strings.Split(fileName, "/")
 	filenameWithoutPath := strings.ToLower(strings.Trim(fileNameSplited[len(fileNameSplited)-1], " "))
 	fileNameWithoutExt := removeExtension(filenameWithoutPath)
 
-	// Sanitize caracteres especiais
 	sanitizedName := sanitizeName(fileNameWithoutExt)
 
-	// Define expressões regulares para capturar informações
 	seasonEpisodeRegex := regexp.MustCompile(`[sS](\d{2})[eE](\d{2})`)
 	yearRegex := regexp.MustCompile(`\b(\d{4})\b`)
 	resolutionRegex := regexp.MustCompile(`\b(\d{3,4}p)\b`)
 	codecRegex := regexp.MustCompile(`(?i)\b(?:` + strings.Join(knownCodecs, "|") + `)\b`)
 
-	// Inicializa um objeto FileInfo
 	fileInfo := FileInfo{
 		SanitizedName: sanitizedName,
 	}
 
-	// Encontra temporada e episódio
 	match := seasonEpisodeRegex.FindStringSubmatch(sanitizedName)
 	if match != nil && len(match) >= 3 {
 		fileInfo.Season = match[1]
@@ -54,7 +51,6 @@ func GetFileInfo(fileName string, videoPath string) FileInfo {
 		fileInfo.Resolution = match[1]
 	}
 
-	// Encontra o ano de lançamento
 	matches := yearRegex.FindAllString(sanitizedName, -1)
 	if matches != nil && len(matches) > 0 {
 		fileInfo.Year = matches[0]
@@ -72,14 +68,12 @@ func GetFileInfo(fileName string, videoPath string) FileInfo {
 	}
 
 	if err != nil {
-		fmt.Println("Erro ao calcular o hash:", err)
+		logger.Error(fmt.Sprintf("Erro ao calcular o hash: %s", err))
 	}
 
-	// Identifica o título do filme/série
 	parts := strings.Split(sanitizedName, " ")
 	var cleanParts []string
 	for _, part := range parts {
-		// Condição para remover strings que parecem anos
 		if !yearRegex.MatchString(part) && !resolutionRegex.MatchString(part) && !codecRegex.MatchString(part) {
 			cleanParts = append(cleanParts, part)
 		}
@@ -89,7 +83,6 @@ func GetFileInfo(fileName string, videoPath string) FileInfo {
 
 	boldPrint := color.New(color.Bold).SprintfFunc()
 
-	// Imprime as informações obtidas
 	logger.Info(fmt.Sprintf("[%s] (%s) SEASON: %s, EPISODE: %s", fileInfo.OpenSubtitlesHash, boldPrint(filenameWithoutPath), fileInfo.Season, fileInfo.Episode))
 
 	return fileInfo

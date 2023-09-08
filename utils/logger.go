@@ -21,6 +21,11 @@ func NewLogger(verbose bool) *Logger {
 }
 
 func GetLogger() *Logger {
+	if logger == nil {
+		logger = &Logger{
+			Verbose: true,
+		}
+	}
 	return logger
 }
 
