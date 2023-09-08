@@ -7,6 +7,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/ceelsoin/subzero/infra"
 	"github.com/ceelsoin/subzero/utils"
 
 	"github.com/spf13/cobra"
@@ -22,6 +23,16 @@ var rootCmd = &cobra.Command{
 		logger = utils.NewLogger(verbose)
 		logger.Info("❄️ Welcome to subzero CLI. The most cold subtitles downloader and manager.")
 		logger.Debug("Starting in verbose mode, a lot of text saying bla bla bla will appear in your screen")
+
+		infra.NewDatabaseInstance()
+
+		c := infra.NewConfigurationInstance()
+		_, err := c.GetConfig()
+		if err != nil {
+			logger.Info("Running interactive setup wizard, may is you first time here.")
+			configCmd.Run(cmd, args)
+		}
+
 	},
 }
 
