@@ -7,40 +7,32 @@ package cmd
 import (
 	"os"
 
+	"github.com/ceelsoin/subzero/utils"
+
 	"github.com/spf13/cobra"
 )
 
+var verbose bool
+var logger *utils.Logger
 
-
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "subzero",
-	Short: "Manage and download subtitles for movies, series and tv shows. Made over by the best subtitle databases and so much coffee",
-	// Long: `Manage and download subtitles for movies, series and tvshows powered by opensubtitles, tmdb and much coffee`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Short: "❄️ Manage and download subtitles for movies, series and tv shows. Made over by the best subtitle databases and so much coffee",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		logger = utils.NewLogger(verbose)
+		logger.Info("❄️ Welcome to subzero CLI. The most cold subtitles downloader and manager.")
+		logger.Debug("Starting in verbose mode, a lot of text saying bla bla bla will appear in your screen")
+	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
+		logger.Error(err.Error())
 		os.Exit(1)
 	}
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.subzero.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose log")
 }
-
-
