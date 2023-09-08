@@ -35,29 +35,23 @@ jobs:
       - name: Check for Tag
         id: check_for_tag
         run: echo "::set-output name=tag::$(echo ${{ github.ref }} | sed 's/refs\/tags\///')"
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v4
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean --snapshot
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.check_for_tag.outputs.tag }}
-          release_name: Release ${{ steps.check_for_tag.outputs.tag }}
-          body: "Release ${{ steps.check_for_tag.outputs.tag }}"
+          tag_name: nightly-${{ steps.get_commit_hash.outputs.commit_hash }}
+          files: dist/*
           draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: .
-          asset_name: subzero-stable
-          asset_content_type: application/octet-stream
+      
 
   nightly_tag:
     permissions: write-all
@@ -96,16 +90,7 @@ jobs:
       - name: Create Tag
         id: create_nightly_tag
         run: git tag -a nightly-${{ steps.get_commit_hash.outputs.commit_hash }} -m "Nightly Build \# ${{ steps.get_commit_hash.outputs.commit_hash }}"
-
-      # - name: Upload assets
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: subzero
-      #     path: dist/*
-      # - uses: actions/download-artifact@v3
-      #   with:
-      #     name: subzero
-      #     path: dist/*
+      
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
