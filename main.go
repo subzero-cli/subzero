@@ -4,7 +4,9 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 */
 package main
 
-import "github.com/ceelsoin/subzero/cmd"
+import (
+	"github.com/ceelsoin/subzero/cmd"
+)
 
 func main() {
 	cmd.Execute()

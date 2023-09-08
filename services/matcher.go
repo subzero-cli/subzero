@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/ceelsoin/subzero/utils"
+	"github.com/fatih/color"
 )
 
 type FileInfo struct {
@@ -24,8 +25,8 @@ func GetFileInfo(fileName string, videoPath string) FileInfo {
 
 	// Remove extensão do arquivo
 	fileNameSplited := strings.Split(fileName, "/")
-	fileNameWithoutExt := fileNameSplited[len(fileNameSplited)-1]
-	fileNameWithoutExt = removeExtension(fileNameWithoutExt)
+	filenameWithoutPath := strings.ToLower(strings.Trim(fileNameSplited[len(fileNameSplited)-1], " "))
+	fileNameWithoutExt := removeExtension(filenameWithoutPath)
 
 	// Sanitize caracteres especiais
 	sanitizedName := sanitizeName(fileNameWithoutExt)
@@ -86,8 +87,10 @@ func GetFileInfo(fileName string, videoPath string) FileInfo {
 
 	fileInfo.Title = strings.Join(cleanParts, " ")
 
+	boldPrint := color.New(color.Bold).SprintfFunc()
+
 	// Imprime as informações obtidas
-	fmt.Printf("[%s] %s %s  SEASON: %s, EPISODE: %s \n", fileInfo.OpenSubtitlesHash, fileInfo.Year, fileInfo.Title, fileInfo.Season, fileInfo.Episode)
+	logger.Info(fmt.Sprintf("[%s] (%s) SEASON: %s, EPISODE: %s", fileInfo.OpenSubtitlesHash, boldPrint(filenameWithoutPath), fileInfo.Season, fileInfo.Episode))
 
 	return fileInfo
 }
