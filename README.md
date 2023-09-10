@@ -1,13 +1,42 @@
 # Subzero CLI
 #### Manage and download subtitles easily over your terminal
-[![Go Build and Release](https://github.com/ceelsoin/subzero/actions/workflows/ci.yml/badge.svg)](https://github.com/ceelsoin/subzero/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/ceelsoin/subzero)](https://goreportcard.com/report/github.com/ceelsoin/subzero)
-[![GitHub release](https://img.shields.io/github/v/release/ceelsoin/subzero)](https://github.com/ceelsoin/subzero)
+[![Go Build and Release](https://github.com/subzero-cli/subzero/actions/workflows/ci.yml/badge.svg)](https://github.com/subzero-cli/subzero/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/subzero-cli/subzero)](https://goreportcard.com/report/github.com/subzero-cli/subzero)
+[![GitHub release](https://img.shields.io/github/v/release/ceelsoin/subzero)](https://github.com/subzero-cli/subzero)
 [![License](https://img.shields.io/badge/License-Mit-blue.svg)](https://opensource.org/licenses/MIT)
 
 
 <div style="text-align: center;">
-<img src="./.github/assets/terminal.gif" alt="MarineGEO circle logo" style="height: 450px; "/>
+    <img src="./.github/assets/terminal.gif" alt="MarineGEO circle logo" style="height: 450px; "/>
 </div>
 
+
+## Install
+
+Check [releases page](https://github.com/subzero-cli/subzeroreleases)
+
+## Using
+
+```
+Usage:
+  subzero [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  config      Configure your experience using subzero cli
+  help        Help about any command
+  scan        Scan files for identify movies, series and tvshows
+  version     Print the version number of subzero
+
+Flags:
+  -h, --help      help for subzero
+  -v, --verbose   Enable verbose log
+
+Use "subzero [command] --help" for more information about a command.
+
+```
+
+## Contributing
+
+Send your pull request, guidelines will be appear here soon
 

@@ -1,4 +1,4 @@
-module github.com/ceelsoin/subzero
+module github.com/subzero-cli/subzero
 
 go 1.18
 

@@ -5,7 +5,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package main
 
 import (
-	"github.com/ceelsoin/subzero/cmd"
+	"github.com/subzero-cli/subzero/cmd"
 )
 
 func main() {

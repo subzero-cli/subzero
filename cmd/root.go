@@ -7,8 +7,8 @@ package cmd
 import (
 	"os"
 
-	"github.com/ceelsoin/subzero/infra"
-	"github.com/ceelsoin/subzero/utils"
+	"github.com/subzero-cli/subzero/infra"
+	"github.com/subzero-cli/subzero/utils"
 
 	"github.com/spf13/cobra"
 )

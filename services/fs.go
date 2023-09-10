@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	cmd_utils "github.com/ceelsoin/subzero/cmd/utils"
-	"github.com/ceelsoin/subzero/domain"
-	"github.com/ceelsoin/subzero/infra"
-	"github.com/ceelsoin/subzero/utils"
+	cmd_utils "github.com/subzero-cli/subzero/cmd/utils"
+	"github.com/subzero-cli/subzero/domain"
+	"github.com/subzero-cli/subzero/infra"
+	"github.com/subzero-cli/subzero/utils"
 )
 
 var videoExtensions = []string{

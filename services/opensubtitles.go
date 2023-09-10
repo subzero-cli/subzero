@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ceelsoin/subzero/utils"
+	"github.com/subzero-cli/subzero/utils"
 )
 
 type SubtitleData struct {

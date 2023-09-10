@@ -7,8 +7,8 @@ import (
 	"path"
 	"sync"
 
-	"github.com/ceelsoin/subzero/domain"
-	"github.com/ceelsoin/subzero/utils"
+	"github.com/subzero-cli/subzero/domain"
+	"github.com/subzero-cli/subzero/utils"
 	"gopkg.in/yaml.v2"
 )
 

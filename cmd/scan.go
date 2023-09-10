@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/ceelsoin/subzero/services"
 	"github.com/spf13/cobra"
+	"github.com/subzero-cli/subzero/services"
 )
 
 // scanCmd represents the scan command

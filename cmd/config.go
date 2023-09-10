@@ -5,10 +5,10 @@ import (
 	"log"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/ceelsoin/subzero/domain"
-	"github.com/ceelsoin/subzero/infra"
-	"github.com/ceelsoin/subzero/utils"
 	"github.com/spf13/cobra"
+	"github.com/subzero-cli/subzero/domain"
+	"github.com/subzero-cli/subzero/infra"
+	"github.com/subzero-cli/subzero/utils"
 )
 
 var checkboxList []string
