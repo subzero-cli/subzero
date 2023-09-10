@@ -12,17 +12,16 @@ import (
 	"github.com/subzero-cli/subzero/utils"
 )
 
-func GetFileInfo(fileName string, videoPath string) domain.FileInfo {
+func GetFileInfo(filePath string) domain.FileInfo {
 
 	logger := utils.GetLogger()
 	database := infra.GetDatabaseInstance()
 
 	fileInfo := domain.FileInfo{}
 
-	fileNameSplited := strings.Split(fileName, "/")
+	fileNameSplited := strings.Split(filePath, "/")
 	filenameWithoutPath := strings.ToLower(strings.Trim(fileNameSplited[len(fileNameSplited)-1], " "))
 	fileNameWithoutExt := removeExtension(filenameWithoutPath)
-	filePath := filepath.Join(videoPath, fileName)
 
 	sanitizedName := sanitizeName(fileNameWithoutExt)
 
@@ -31,15 +30,10 @@ func GetFileInfo(fileName string, videoPath string) domain.FileInfo {
 	resolutionRegex := regexp.MustCompile(`\b(\d{3,4}p)\b`)
 	codecRegex := regexp.MustCompile(`(?i)\b(?:` + strings.Join(knownCodecs, "|") + `)\b`)
 
-	path, err := getFullPath(filePath)
-	if err != nil {
-		logger.Error(fmt.Sprintf("Failed to load path %s with error: %s", videoPath, err.Error()))
-	}
-
-	logger.Debug(fmt.Sprintf("Using path: %s", path))
+	logger.Debug(fmt.Sprintf("Using path: %s", filePath))
 
 	fileInfo.FileName = filenameWithoutPath
-	fileInfo.Path = path
+	fileInfo.Path = filepath.Dir(filePath)
 	fileInfo.SanitizedName = sanitizedName
 
 	// md5, err := utils.CalculateChecksum(filePath)

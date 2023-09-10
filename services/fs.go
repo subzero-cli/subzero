@@ -3,7 +3,6 @@ package services
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -24,6 +23,10 @@ var videoExtensions = []string{
 var logger *utils.Logger
 
 func StartFileScan(directoryPath string) {
+	scanPath, err := utils.GetFullPath(directoryPath)
+	if err != nil {
+		logger.Error(fmt.Sprintf("Failed to find for files: %s", err.Error()))
+	}
 	logger = utils.GetLogger()
 	database := infra.GetDatabaseInstance()
 
@@ -37,21 +40,22 @@ func StartFileScan(directoryPath string) {
 
 	utils.AsyncTaskLoading(func() {
 
-		err = FindVideoFiles(directoryPath, &videoFiles)
+		err = FindVideoFiles(scanPath, &videoFiles)
 		if err != nil {
 			logger.Error(fmt.Sprintf("Failed to find for files: %s", err.Error()))
 		}
-	}, fmt.Sprintf("Scanning for video files in folder %s you can specify scan directory, run `subzero help` for details", directoryPath))
+	}, fmt.Sprintf("Scanning for video files in folder %s you can specify scan directory, run `subzero help` for details", scanPath))
 
-	logger.Info(fmt.Sprintf("%b files found", len(videoFiles)))
+	logger.Info(fmt.Sprintf("%d files found", len(videoFiles)))
 
 	var fileInfoList []domain.FileInfo
 	for _, file := range videoFiles {
-		fileInfo := GetFileInfo(file, directoryPath)
+		fmt.Sprintln(file)
+		fileInfo := GetFileInfo(file)
 		fileInfoList = append(fileInfoList, fileInfo)
 	}
 
-	logger.Info(fmt.Sprintf("%b files updated to database", len(fileInfoList)))
+	logger.Info(fmt.Sprintf("%d files updated to database", len(fileInfoList)))
 
 	answer := cmd_utils.AskYesNo("Would automatic find and download subtitles for this files?")
 
@@ -109,20 +113,4 @@ func FindVideoFiles(dirPath string, videoFiles *[]string) error {
 	}
 
 	return nil
-}
-
-func getFullPath(relativePath string) (string, error) {
-	absPath := relativePath
-
-	if !filepath.IsAbs(absPath) {
-		wd, err := os.Getwd()
-		if err != nil {
-			fmt.Println("Erro ao obter o diretório de trabalho:", err)
-			return "", err
-		}
-		absPath = filepath.Join(wd, relativePath)
-	}
-
-	filepath.Dir(absPath)
-	return filepath.Dir(absPath), nil
 }
