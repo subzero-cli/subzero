@@ -1,2 +1,6 @@
 movies/
 .vscode/*.log
+*.srt
+movies/**
+*.mkv
+*.mp4

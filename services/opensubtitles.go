@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
+	"github.com/subzero-cli/subzero/domain"
 	"github.com/subzero-cli/subzero/utils"
 )
 
@@ -100,12 +102,29 @@ type SubtitleDownloadInfo struct {
 
 var userAgent string = "Subzero CLI over Go HTTP"
 
-func SearchByHash(hash string, key string) (SubtitleData, error) {
+func Search(fileInfo domain.FileInfo, key string) (SubtitleData, error) {
 	logger := utils.GetLogger()
 
 	logger.Debug(fmt.Sprintf("Using opensubtitles.com api key: %s", key))
 
-	url := fmt.Sprintf("https://api.opensubtitles.com/api/v1/subtitles?moviehash=%s", hash)
+	baseURL := fmt.Sprintf("https://api.opensubtitles.com/api/v1/subtitles")
+
+	queryParams := url.Values{}
+
+	if len(fileInfo.OpenSubtitlesHash) > 0 {
+		queryParams.Set("moviehash", fileInfo.OpenSubtitlesHash)
+	}
+	if len(fileInfo.Episode) > 0 {
+		queryParams.Set("episode_number", fileInfo.Episode)
+	}
+	if len(fileInfo.Season) > 0 {
+		queryParams.Set("season_number", fileInfo.Season)
+	}
+	if len(fileInfo.Year) > 0 {
+		queryParams.Set("year", fileInfo.Year)
+	}
+
+	url := fmt.Sprintf("%s?%s", baseURL, queryParams.Encode())
 
 	logger.Debug(fmt.Sprintf("Requesting url: %s", url))
 	time.Sleep(250 * time.Millisecond)
@@ -136,12 +155,12 @@ func SearchByHash(hash string, key string) (SubtitleData, error) {
 	return subtitles, nil
 }
 
-func DownloadSubtitle(fileId string, key string, outputPath string) error {
+func DownloadSubtitle(fileId int, key string, outputPath string) error {
 	logger := utils.GetLogger()
 
 	url := "https://api.opensubtitles.com/api/v1/download"
 
-	payload := strings.NewReader(fmt.Sprintf("{\"file_id\": %s, \"force_download\": true}", fileId))
+	payload := strings.NewReader(fmt.Sprintf("{\"file_id\": %d, \"force_download\": true}", fileId))
 
 	req, err := http.NewRequest("POST", url, payload)
 	if err != nil {
@@ -171,7 +190,7 @@ func DownloadSubtitle(fileId string, key string, outputPath string) error {
 	if err != nil {
 		return err
 	}
-	logger.Debug(fmt.Sprintf("(File ID: %s) Opensubtitles.com quota %d/%d message: %s", fileId, download.Requests, download.Remaining, download.Message))
+	logger.Debug(fmt.Sprintf("(File ID: %d) Opensubtitles.com quota %d/%d message: %s", fileId, download.Requests, download.Remaining, download.Message))
 
 	if len(download.FileName) > 0 {
 		utils.DownloadFile(download.Link, download.FileName, outputPath)

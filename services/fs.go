@@ -62,7 +62,7 @@ func StartFileScan(directoryPath string) {
 	if answer {
 		for _, fileInfo := range fileInfoList {
 			if len(fileInfo.OpenSubtitlesHash) > 0 {
-				subtitles, err := SearchByHash(fileInfo.OpenSubtitlesHash, cfg.OpenSubtitlesApiKey)
+				subtitles, err := Search(fileInfo, cfg.OpenSubtitlesApiKey)
 				if err != nil {
 					logger.Error(err.Error())
 				}
@@ -71,10 +71,13 @@ func StartFileScan(directoryPath string) {
 				database.Update(fileInfo.ID, fileInfo)
 
 				for _, subtitle := range subtitles.Data {
-					// logger.Info(fmt.Sprintf("Downloading subtitle for (%s) for language %s", fileInfo.FileName, subtitle.Attributes.Language))
-					err := DownloadSubtitle(subtitle.ID, cfg.OpenSubtitlesApiKey, fileInfo.Path)
-					if err != nil {
-						fmt.Errorf(err.Error())
+					for _, file := range subtitle.Attributes.Files {
+						logger.Debug(fmt.Sprintf("Downloading subtitle for (%s) for language %s", fileInfo.FileName, subtitle.Attributes.Language))
+						err := DownloadSubtitle(file.FileID, cfg.OpenSubtitlesApiKey, fileInfo.Path)
+						if err != nil {
+							logger.Error(err.Error())
+						}
+
 					}
 				}
 			}

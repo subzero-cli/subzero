@@ -26,6 +26,7 @@ func GetFileInfo(filePath string) domain.FileInfo {
 	sanitizedName := sanitizeName(fileNameWithoutExt)
 
 	seasonEpisodeRegex := regexp.MustCompile(`[sS](\d{2})[eE](\d{2})`)
+	anotherSeasonEpisodeRegex := regexp.MustCompile(`[sS](\d+)[.][eE](\d+)`)
 	yearRegex := regexp.MustCompile(`\b(\d{4})\b`)
 	resolutionRegex := regexp.MustCompile(`\b(\d{3,4}p)\b`)
 	codecRegex := regexp.MustCompile(`(?i)\b(?:` + strings.Join(knownCodecs, "|") + `)\b`)
@@ -42,6 +43,12 @@ func GetFileInfo(filePath string) domain.FileInfo {
 	// }
 
 	match := seasonEpisodeRegex.FindStringSubmatch(sanitizedName)
+	if match != nil && len(match) >= 3 {
+		fileInfo.Season = match[1]
+		fileInfo.Episode = match[2]
+	}
+
+	match = anotherSeasonEpisodeRegex.FindStringSubmatch(sanitizedName)
 	if match != nil && len(match) >= 3 {
 		fileInfo.Season = match[1]
 		fileInfo.Episode = match[2]
@@ -85,7 +92,11 @@ func GetFileInfo(filePath string) domain.FileInfo {
 
 	boldPrint := color.New(color.Bold).SprintfFunc()
 
-	logger.Info(fmt.Sprintf("[%s] (%s) SEASON: %s, EPISODE: %s", fileInfo.OpenSubtitlesHash, boldPrint(filenameWithoutPath), fileInfo.Season, fileInfo.Episode))
+	var seasonAndEpisode string
+	if len(fileInfo.Season) > 0 {
+		seasonAndEpisode = fmt.Sprintf("SEASON: %s, EPISODE: %s", fileInfo.Season, fileInfo.Episode)
+	}
+	logger.Info(fmt.Sprintf("[%s] (%s) %s", fileInfo.OpenSubtitlesHash, boldPrint(filenameWithoutPath), seasonAndEpisode))
 
 	database.Create(fileInfo)
 
