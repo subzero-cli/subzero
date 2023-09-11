@@ -40,7 +40,7 @@ func NewDatabaseInstance() *Database {
 		if _, err := os.Stat(databasePath); os.IsNotExist(err) {
 			err := instance.writeYAML([]domain.FileInfo{})
 			if err != nil {
-				log.Fatalf("Erro ao criar o arquivo YAML: %v", err)
+				log.Fatalf("Failed when create yaml database: %s", err.Error())
 			}
 		}
 	})
@@ -123,7 +123,7 @@ func (db *Database) Update(id string, info domain.FileInfo) error {
 	}
 
 	if !updated {
-		return errors.New("FileInfo não encontrado para atualização")
+		return errors.New("Database entry not updated")
 	}
 
 	return db.writeYAML(data)
@@ -148,7 +148,7 @@ func (db *Database) Delete(id string) error {
 	}
 
 	if !deleted {
-		return errors.New("FileInfo não encontrado para deleção")
+		return errors.New("Database entry not deleted")
 	}
 
 	return db.writeYAML(data)

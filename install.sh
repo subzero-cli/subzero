@@ -59,6 +59,6 @@ sudo cp "$TMP_DIR//subzero" /usr/local/bin
 
 rm -rf "$TMP_DIR"
 
-echo "Instalação concluída com sucesso!"
+echo "Finished! Now you can run: subzero"
 
 subzero
