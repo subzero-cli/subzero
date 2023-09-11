@@ -5,7 +5,7 @@ import (
 )
 
 func TestGetFileInfo(t *testing.T) {
-	fileInfo := GetFileInfo("1988_example_video_S01E01_720p_h.264.mp4", "/path/to/video/")
+	fileInfo := GetFileInfo("1988_example_video_S01E01_720p_h.264.mp4")
 	if fileInfo.Year != "1988" {
 		t.Errorf("Expected empty year, got '%s'", fileInfo.Year)
 	}
