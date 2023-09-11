@@ -4,12 +4,7 @@ OS=$(uname -s)
 
 ARCH=$(uname -m)
 
-if [ $# -eq 0 ]; then
-    echo "Por favor, forneça a versão do subzero como argumento."
-    exit 1
-fi
-
-VERSION=$1
+VERSION=1.0.0
 
 URL="https://github.com/subzero-cli/subzero/releases/download/v$VERSION/"
 
@@ -60,7 +55,7 @@ fi
 
 tar -xzvf "$TMP_DIR/$FILE" -C "$TMP_DIR"
 
-sudo cp "$TMP_DIR/subzero" /usr/bin
+sudo cp "$TMP_DIR//subzero" /usr/local/bin
 
 rm -rf "$TMP_DIR"
 
