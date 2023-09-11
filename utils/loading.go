@@ -11,7 +11,6 @@ func AsyncTaskLoading(task func(), description string) {
 	s.Suffix = " " + description
 	s.Start()
 
-	// Chama a função de trabalho
 	func() {
 		time.Sleep(3 * time.Second)
 		task()

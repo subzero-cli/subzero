@@ -27,7 +27,7 @@ func HashOpenSubtitles(videoPath string) (string, error) {
 
 	const (
 		bufferSize = 65536
-		bytesize   = 8 // Tamanho de int64 em bytes
+		bytesize   = 8
 	)
 
 	var filehash uint64 = uint64(fileSize)

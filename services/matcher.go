@@ -77,7 +77,7 @@ func GetFileInfo(filePath string) domain.FileInfo {
 	fileInfo.ID = hash
 
 	if err != nil {
-		logger.Error(fmt.Sprintf("Erro ao calcular o hash: %s", err))
+		logger.Error(fmt.Sprintf("Error when get file hash: %s", err))
 	}
 
 	parts := strings.Split(sanitizedName, " ")

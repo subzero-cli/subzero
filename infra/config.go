@@ -31,7 +31,7 @@ func NewConfigurationInstance() *Configuration {
 	if _, err := os.Stat(configurationPath); os.IsNotExist(err) {
 		err := instance.writeYAML([]domain.FileInfo{})
 		if err != nil {
-			log.Fatalf("Erro ao criar o arquivo YAML: %v", err)
+			log.Fatalf("Failed when create yaml config file: %s", err.Error())
 		}
 	}
 
