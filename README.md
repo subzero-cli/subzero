@@ -16,12 +16,13 @@
 ## Install
 
 ```bash
-$ curl -o- https://raw.githubusercontent.com/subzero-cli/subzero/master/install.sh | bash
+curl -o- https://raw.githubusercontent.com/subzero-cli/subzero/master/install.sh | bash
 ```
+or
 ```bash
-$ wget -qO- https://raw.githubusercontent.com/subzero-cli/subzero/master/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/subzero-cli/subzero/master/install.sh | bash
 ```
-or check [releases page](https://github.com/subzero-cli/subzeroreleases) to install nightly builds
+or check [releases page](https://github.com/subzero-cli/subzero/releases) to install nightly builds
 
 ## Using
 
