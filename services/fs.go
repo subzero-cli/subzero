@@ -90,13 +90,16 @@ func StartFileScan(directoryPath string) {
 }
 
 func FindVideoFiles(dirPath string, videoFiles *[]string) error {
-
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
 		return err
 	}
 
 	for _, file := range files {
+		if strings.HasPrefix(file.Name(), ".") {
+			continue
+		}
+
 		filePath := filepath.Join(dirPath, file.Name())
 
 		if file.IsDir() {
