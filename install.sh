@@ -4,12 +4,8 @@ OS=$(uname -s)
 
 ARCH=$(uname -m)
 
-if [ $# -eq 0 ]; then
-    echo "Por favor, forneça a versão do subzero como argumento."
-    exit 1
-fi
 
-VERSION=$1
+VERSION=1.0.0
 
 URL="https://github.com/subzero-cli/subzero/releases/download/v$VERSION/"
 
