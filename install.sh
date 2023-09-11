@@ -4,7 +4,7 @@ OS=$(uname -s)
 
 ARCH=$(uname -m)
 
-VERSION=1.0.0
+VERSION=1.0.1
 
 URL="https://github.com/subzero-cli/subzero/releases/download/v$VERSION/"
 
