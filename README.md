@@ -1,3 +1,5 @@
+<img src="./.github/assets/terminal.svg" style="height: 80px;"/>
+
 # Subzero CLI
 #### Manage and download subtitles easily over your terminal
 [![Go Build and Release](https://github.com/subzero-cli/subzero/actions/workflows/ci.yml/badge.svg)](https://github.com/subzero-cli/subzero/actions/workflows/ci.yml)
@@ -7,7 +9,7 @@
 
 
 <div style="text-align: center;">
-    <img src="./.github/assets/terminal.gif" alt="MarineGEO circle logo" style="height: 450px; "/>
+    <img src="./.github/assets/terminal.gif" style="height: 450px; "/>
 </div>
 
 
@@ -19,8 +21,6 @@ $ curl -o- https://raw.githubusercontent.com/subzero-cli/subzero/master/install.
 ```bash
 $ wget -qO- https://raw.githubusercontent.com/subzero-cli/subzero/master/install.sh | bash
 ```
-
-
 or check [releases page](https://github.com/subzero-cli/subzeroreleases) to install nightly builds
 
 ## Using
