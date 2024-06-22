@@ -102,6 +102,8 @@ type SubtitleDownloadInfo struct {
 
 var userAgent string = "Subzero CLI over Go HTTP"
 
+// https://opensubtitles.stoplight.io/docs/opensubtitles-api/
+
 func Search(fileInfo domain.FileInfo, key string) (SubtitleData, error) {
 	logger := utils.GetLogger()
 
@@ -122,6 +124,9 @@ func Search(fileInfo domain.FileInfo, key string) (SubtitleData, error) {
 	}
 	if len(fileInfo.Year) > 0 {
 		queryParams.Set("year", fileInfo.Year)
+	}
+	if fileInfo.Title != "" {
+		queryParams.Set("query", fileInfo.Title)
 	}
 
 	url := fmt.Sprintf("%s?%s", baseURL, queryParams.Encode())
