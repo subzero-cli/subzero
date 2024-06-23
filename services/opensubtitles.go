@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -147,6 +148,7 @@ func Search(fileInfo domain.FileInfo, key string) (SubtitleData, error) {
 	if err != nil {
 		return SubtitleData{}, err
 	}
+	handleRateLimiting(res)
 
 	defer res.Body.Close()
 
@@ -183,6 +185,8 @@ func DownloadSubtitle(fileId int, key string, outputPath string) error {
 		return err
 	}
 
+	handleRateLimiting(res)
+
 	defer res.Body.Close()
 	// body, err := io.ReadAll(res.Body)
 	// if err != nil {
@@ -202,4 +206,53 @@ func DownloadSubtitle(fileId int, key string, outputPath string) error {
 	}
 
 	return nil
+}
+
+func handleRateLimiting(res *http.Response) {
+	// Parse rate limit headers
+	rateLimitRemaining := res.Header.Get("ratelimit-remaining")
+	rateLimitReset := res.Header.Get("ratelimit-reset")
+	xRateLimitRemainingSecond := res.Header.Get("x-ratelimit-remaining-second")
+	xRateLimitLimitSecond := res.Header.Get("x-ratelimit-limit-second")
+
+	remainingRequests, err := strconv.Atoi(rateLimitRemaining)
+	if err != nil {
+		logger.Error(fmt.Sprintln("Error parsing ratelimit-remaining:", err))
+		remainingRequests = 0
+	}
+
+	resetTime, err := strconv.Atoi(rateLimitReset)
+	if err != nil {
+		logger.Error(fmt.Sprintln("Error parsing ratelimit-reset:", err))
+		resetTime = 1
+	}
+
+	remainingRequestsSecond, err := strconv.Atoi(xRateLimitRemainingSecond)
+	if err != nil {
+		logger.Error(fmt.Sprintln("Error parsing x-ratelimit-remaining-second:", err))
+		remainingRequestsSecond = 0
+	}
+
+	limitSecond, err := strconv.Atoi(xRateLimitLimitSecond)
+	if err != nil {
+		logger.Error(fmt.Sprintln("Error parsing x-ratelimit-limit-second:", err))
+		limitSecond = 1
+	}
+
+	// limitSecond = limitSecond - 1
+
+	// Calculate sleep time
+	var sleepTime time.Duration
+	if remainingRequests == 0 {
+		sleepTime = time.Duration(resetTime) * time.Second
+	} else if remainingRequestsSecond == 0 {
+		sleepTime = time.Duration(1) * time.Second
+	} else if remainingRequestsSecond < limitSecond {
+		sleepTime = time.Duration(1) * time.Second
+	} else {
+		sleepTime = time.Duration(0)
+	}
+
+	logger.Debug(fmt.Sprintf("Sleeping for %v seconds to respect rate limit\n", sleepTime.Seconds()))
+	time.Sleep(sleepTime)
 }
