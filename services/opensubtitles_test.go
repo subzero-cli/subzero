@@ -1,22 +1,34 @@
 package services
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/subzero-cli/subzero/domain"
+	"github.com/subzero-cli/subzero/utils"
 )
 
 func TestSearchByHash(t *testing.T) {
+	logger = utils.NewLogger(false)
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
 	fileInfo := domain.FileInfo{}
 	key := "someapikey"
 
+	headers := http.Header{
+		"ratelimit-remaining":          []string{"100"},
+		"ratelimit-reset":              []string{"60"},
+		"x-ratelimit-remaining-second": []string{"10"},
+		"x-ratelimit-limit-second":     []string{"5"},
+	}
 	responseBody := `{"total_pages": 1, "total_count": 1, "per_page": 1, "page": 1, "data": []}`
-	httpmock.RegisterResponder("GET", "https://api.opensubtitles.com/api/v1/subtitles", httpmock.NewStringResponder(200, responseBody))
+
+	mockResponder := httpmock.NewStringResponder(200, responseBody)
+	mockResponder.HeaderSet(headers)
+	httpmock.RegisterResponder("GET", "https://api.opensubtitles.com/api/v1/subtitles", mockResponder)
 
 	subtitleData, err := Search(fileInfo, key)
 
@@ -26,6 +38,7 @@ func TestSearchByHash(t *testing.T) {
 }
 
 func TestDownloadSubtitle(t *testing.T) {
+	logger = utils.NewLogger(false)
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -43,7 +56,16 @@ func TestDownloadSubtitle(t *testing.T) {
 		"reset_time": "07 hours and 30 minutes",
 		"reset_time_utc": "2022-04-08T13:03:16.000Z"
 	}`
-	httpmock.RegisterResponder("POST", "https://api.opensubtitles.com/api/v1/download", httpmock.NewStringResponder(200, responseBody))
+	headers := http.Header{
+		"ratelimit-remaining":          []string{"100"},
+		"ratelimit-reset":              []string{"60"},
+		"x-ratelimit-remaining-second": []string{"10"},
+		"x-ratelimit-limit-second":     []string{"5"},
+	}
+	mockResponder := httpmock.NewStringResponder(200, responseBody)
+	mockResponder.HeaderSet(headers)
+
+	httpmock.RegisterResponder("POST", "https://api.opensubtitles.com/api/v1/download", mockResponder)
 
 	err := DownloadSubtitle(fileID, key, outputPath)
 
